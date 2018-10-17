@@ -15,17 +15,6 @@ composer.phar require sgomez/simplesamlphp-module-oauth2 ~2.0 # for SSP >= 2.0|m
 
 ## Configuration
 
-This module requires [sgomez/simplesamlphp-module-dbal](https://github.com/sgomez/simplesamlphp-module-dbal)
-module configured. It's installed as a dependency but you need to read the module info and configure it.
- 
-### Create the schema
- 
-You need to run this to create the schema using the DBAL store module:
- 
-```
-bash$ vendor/bin/dbalschema
-```
-
 ### Configure the module
 
 Copy the template file to the config directory:
