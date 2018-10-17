@@ -10,15 +10,16 @@
 
 namespace SimpleSAML\Modules\OAuth2\Repositories;
 
+
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use SimpleSAML\Modules\OAuth2\Entity\AccessTokenEntity;
 
-class AccessTokenRepository extends AbstractDBALRepository implements AccessTokenRepositoryInterface
+class AccessTokenRepository extends AbstractRepository implements AccessTokenRepositoryInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
     {
@@ -32,7 +33,7 @@ class AccessTokenRepository extends AbstractDBALRepository implements AccessToke
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
@@ -41,64 +42,69 @@ class AccessTokenRepository extends AbstractDBALRepository implements AccessToke
             $scopes[] = $scope->getIdentifier();
         }
 
-        $this->conn->insert(
-            $this->getTableName(),
+        $id = $accessTokenEntity->getIdentifier();
+
+        $this->store->set(
+            $this->getTableName(), $id,
             [
-                'id' => $accessTokenEntity->getIdentifier(),
+                'id' => $id,
                 'scopes' => $scopes,
                 'expires_at' => $accessTokenEntity->getExpiryDateTime(),
                 'user_id' => $accessTokenEntity->getUserIdentifier(),
                 'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
-            ], [
-                'string',
-                'json_array',
-                'datetime',
-                'string',
-                'string',
-            ]
+                'is_revoked' => false
+            ], $accessTokenEntity->getExpiryDateTime()->getTimestamp()
         );
     }
 
     public function getUserId($tokenId)
     {
-        $userId = $this->conn->fetchColumn(
-            'SELECT user_id FROM '.$this->getTableName().' WHERE id = ?',
-            [$tokenId]
-        );
+        $t = $this->getValue($this->getTableName(), $tokenId);
 
-        return $this->conn->convertToPHPValue($userId, 'string');
+        if(is_null($t)){
+            throw new SimpleSAML_Error_Exception("Token not found", 8767);
+        }
+
+        return $t['user_id'];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function revokeAccessToken($tokenId)
     {
-        $this->conn->update($this->getTableName(), ['is_revoked' => true], ['id' => $tokenId]);
+        $t = $this->getValue($this->getTableName(), $tokenId);
+
+        if(is_null($t)){
+            throw new SimpleSAML_Error_Exception("Token not found", 8767);
+        }
+
+        $t['is_revoked'] = true;
+
+        $this->store->set($this->getTableName(), $tokenId, $t);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function isAccessTokenRevoked($tokenId)
     {
-        return $this->conn->fetchColumn(
-            'SELECT is_revoked FROM '.$this->getTableName().' WHERE id = ?',
-            [$tokenId]
-        );
+        $t = $this->getValue($this->getTableName(), $tokenId);
+
+        if(is_null($t)){
+            throw new SimpleSAML_Error_Exception("Token not found", 8767);
+        }
+
+        return $t['is_revoked'];
     }
 
     public function removeExpiredAccessTokens()
     {
-        $this->conn->executeUpdate(
-            'DELETE FROM '.$this->getTableName().' WHERE expires_at < ?',
-            [new \DateTime()],
-            ['datetime']
-        );
+        $this->removeExpired($this->getTableName());
     }
 
     public function getTableName()
     {
-        return $this->store->getPrefix().'_oauth2_accesstoken';
+        return 'oauth2_accesstoken';
     }
 }

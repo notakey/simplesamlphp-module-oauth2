@@ -8,19 +8,22 @@
  * file that was distributed with this source code.
  */
 
+
 namespace SimpleSAML\Modules\OAuth2\Repositories;
+
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 
-class UserRepository extends AbstractDBALRepository implements UserRepositoryInterface
+class UserRepository extends AbstractRepository implements UserRepositoryInterface
 {
     public function getUserEntityByUserCredentials(
         $username,
         $password,
         $grantType,
         ClientEntityInterface $clientEntity
-    ) {
+    )
+    {
         throw new \Exception('Not supported');
     }
 
@@ -28,17 +31,12 @@ class UserRepository extends AbstractDBALRepository implements UserRepositoryInt
     {
         $now = new \DateTime();
 
-        $this->conn->insert($this->getTableName(),
+        $this->store->set($this->getTableName(), $id,
             [
                 'id' => $id,
                 'attributes' => $attributes,
                 'created_at' => $now,
                 'updated_at' => $now,
-            ], [
-                'string',
-                'json_array',
-                'datetime',
-                'datetime',
             ]
         );
     }
@@ -46,46 +44,37 @@ class UserRepository extends AbstractDBALRepository implements UserRepositoryInt
     public function updateUser($id, $attributes)
     {
         $now = new \DateTime();
+        $user = $this->getValue($this->getTableName(), $id);
+        $user['attributes'] = $attributes;
+        $user['updated_at'] = $now;
 
-        return $this->conn->update($this->getTableName(),
-            [
-                'attributes' => $attributes,
-                'updated_at' => $now,
-            ], [
-               'id' => $id,
-            ], [
-                'json_array',
-                'datetime',
-            ]
-        );
+        return $this->store->set($this->getTableName(), $id, $user);
     }
 
     public function delete($userIdentifier)
     {
-        $this->conn->delete($this->getTableName(), [
-            'id' => $userIdentifier,
-        ]);
+        $this->store->delete($this->getTableName(), $userIdentifier);
     }
 
     public function insertOrCreate($userId, $attributes)
     {
-        if (0 === $this->updateUser($userId, $attributes)) {
+        $user = $this->getValue($this->getTableName(), $userId);
+        if (is_null($user)) {
             $this->persistNewUser($userId, $attributes);
+        }else{
+            $this->updateUser($userId, $attributes);
         }
     }
 
     public function getAttributes($userId)
     {
-        $attributes = $this->conn->fetchColumn(
-            'SELECT attributes FROM '.$this->getTableName().' WHERE id = ?',
-            [$userId]
-        );
+        $user = $this->getValue($this->getTableName(), $userId);
 
-        return $this->conn->convertToPHPValue($attributes, 'json_array');
+        return $user['attributes'];
     }
 
     public function getTableName()
     {
-        return $this->store->getPrefix().'_oauth2_user';
+        return 'oauth2_user';
     }
 }

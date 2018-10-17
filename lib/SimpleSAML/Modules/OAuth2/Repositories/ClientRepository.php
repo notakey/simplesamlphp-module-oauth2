@@ -10,14 +10,15 @@
 
 namespace SimpleSAML\Modules\OAuth2\Repositories;
 
+
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use SimpleSAML\Modules\OAuth2\Entity\ClientEntity;
 use SimpleSAML\Utils\Random;
 
-class ClientRepository extends AbstractDBALRepository implements ClientRepositoryInterface
+class ClientRepository extends AbstractRepository implements ClientRepositoryInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getClientEntity($clientIdentifier, $grantType, $clientSecret = null, $mustValidateSecret = true)
     {
@@ -25,11 +26,11 @@ class ClientRepository extends AbstractDBALRepository implements ClientRepositor
         $entity = $this->find($clientIdentifier);
 
         if (!$entity) {
-            return null;
+            return;
         }
 
         if ($clientSecret && $clientSecret !== $entity['secret']) {
-            return null;
+            return;
         }
 
         $client = new ClientEntity();
@@ -37,12 +38,11 @@ class ClientRepository extends AbstractDBALRepository implements ClientRepositor
         $client->setName($entity['name']);
         $client->setRedirectUri($entity['redirect_uri']);
         $client->setSecret($entity['secret']);
-        $client->setAuthSource($entity['auth_source']);
 
         return $client;
     }
 
-    public function persistNewClient($id, $secret, $name, $description, $authSource, $redirectUri)
+    public function persistNewClient($id, $secret, $name, $description, $redirectUri)
     {
         if (false === is_array($redirectUri)) {
             if (is_string($redirectUri)) {
@@ -52,107 +52,77 @@ class ClientRepository extends AbstractDBALRepository implements ClientRepositor
             }
         }
 
-        $this->conn->insert($this->getTableName(), [
+        $this->store->set($this->getTableName(), $id, [
             'id' => $id,
             'secret' => $secret,
             'name' => $name,
             'description' => $description,
-            'auth_source' => $authSource,
             'redirect_uri' => $redirectUri,
             'scopes' => ['basic'],
-        ], [
-            'string',
-            'string',
-            'string',
-            'string',
-            'string',
-            'json_array',
-            'json_array',
         ]);
     }
 
-    public function updateClient($id, $name, $description, $authSource, $redirectUri)
+    public function updateClient($id, $name, $description, $redirectUri)
     {
-        $this->conn->update($this->getTableName(), [
+        $v = $this->find($id);
+
+        if(!$v){
+            throw new SimpleSAML_Error_Exception("OAuth client not found", 8769);
+        }
+
+        $this->store->set($this->getTableName(), $id, [
+            'id' => $id,
             'name' => $name,
+            'secret' => $v['secret'],
             'description' => $description,
-            'auth_source' => $authSource,
             'redirect_uri' => $redirectUri,
             'scopes' => ['basic'],
-        ], [
-            'id' => $id,
-        ], [
-            'string',
-            'string',
-            'string',
-            'json_array',
-            'json_array',
         ]);
     }
 
     public function delete($clientIdentifier)
     {
-        $conn = $this->store->getConnection();
-        $conn->delete($this->getTableName(), [
-            'id' => $clientIdentifier,
-        ]);
+        $this->store->delete($this->getTableName(), $clientIdentifier);
     }
 
-    /**
-     * @param $clientIdentifier
-     *
-     * @return array
-     */
     public function find($clientIdentifier)
     {
-        $client = $this->conn->fetchAssoc(
-            'SELECT * FROM '.$this->getTableName().' WHERE id = ?',
-            [
-                $clientIdentifier,
-            ], [
-                'string',
-            ]
-        );
-
-        if ($client) {
-            $client['redirect_uri'] = $this->conn->convertToPHPValue($client['redirect_uri'], 'json_array');
-            $client['scopes'] = $this->conn->convertToPHPValue($client['scopes'], 'json_array');
+        if(is_null($clientIdentifier)){
+            throw new SimpleSAML_Error_Exception("OAuth clientIdentifier cannot be empty", 8767);
         }
+
+        $client = $this->store->get($this->getTableName(), $clientIdentifier);
+
+        // if ($client) {
+        //     $client['redirect_uri'] = $this->store->convertToPHPValue($client['redirect_uri'], 'json_array' );
+        //     $client['scopes'] = $this->store->convertToPHPValue($client['scopes'], 'json_array' );
+        // }
 
         return $client;
     }
 
-    /**
-     * @return ClientEntity[]
-     */
     public function findAll()
     {
-        $clients = $this->conn->fetchAll(
-            'SELECT * FROM '.$this->getTableName()
-        );
+        $clients = $this->store->get($this->getTableName(), null);
 
-        foreach ($clients as &$client) {
-            $client['redirect_uri'] = $this->conn->convertToPHPValue($client['redirect_uri'], 'json_array');
-            $client['scopes'] = $this->conn->convertToPHPValue($client['scopes'], 'json_array');
-        }
+        // foreach ($clients as &$client) {
+        //     $client['redirect_uri'] = $this->store->convertToPHPValue($client['redirect_uri'], 'json_array' );
+        //     $client['scopes'] = $this->store->convertToPHPValue($client['scopes'], 'json_array' );
+        // }
 
         return $clients;
     }
 
     public function getTableName()
     {
-        return $this->store->getPrefix().'_oauth2_client';
+        return 'oauth2_client';
     }
 
     public function restoreSecret($clientIdentifier)
     {
         $secret = Random::generateID();
-        $this->conn->update($this->getTableName(), [
-            'secret' => $secret,
-        ], [
-            'id' => $clientIdentifier,
-        ], [
-            'string',
-        ]);
+        $v = $this->find($clientIdentifier);
+        $v['secret'] = $secret;
+        $this->store->set($this->getTableName(), $clientIdentifier, $v);
     }
 }

@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
+
 use SimpleSAML\Modules\OAuth2\OAuth2ResourceServer;
 use SimpleSAML\Modules\OAuth2\Repositories\AccessTokenRepository;
 use SimpleSAML\Modules\OAuth2\Repositories\UserRepository;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\Response\SapiEmitter;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 try {
@@ -31,13 +31,13 @@ try {
     $attributes['attributes'] = $userRepository->getAttributes($userId);
     $attributes['username'] = $userId;
 
-    $response = new JsonResponse($attributes);
+    $response = new Response\JsonResponse($attributes);
 
-    $emiter = new SapiEmitter();
+    $emiter = new Response\SapiEmitter();
     $emiter->emit($response);
 } catch (Exception $e) {
-    header('Content-type: text/plain; utf-8', true, 500);
-    header('OAuth-Error: '.$e->getMessage());
+    header('Content-type: text/plain; utf-8', TRUE, 500);
+    header('OAuth-Error: ' . $e->getMessage());
 
     print_r($e);
 }

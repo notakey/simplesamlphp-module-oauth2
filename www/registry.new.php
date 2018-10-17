@@ -16,14 +16,14 @@ use SimpleSAML\Utils\Random;
 
 /* Load simpleSAMLphp, configuration and metadata */
 $action = \SimpleSAML\Module::getModuleURL('oauth2/registry.new.php');
-$config = \SimpleSAML_Configuration::getInstance();
+$config = SimpleSAML_Configuration::getInstance();
 
 Auth::requireAdmin();
 
 $form = new ClientForm('client');
 $form->setAction($action);
 
-if ($form->isSubmitted() && $form->isSuccess()) {
+if ( $form->isSubmitted() && $form->isSuccess() ) {
     $client = $form->getValues();
     $client['id'] = Random::generateID();
     $client['secret'] = Random::generateID();
@@ -34,13 +34,12 @@ if ($form->isSubmitted() && $form->isSuccess()) {
         $client['secret'],
         $client['name'],
         $client['description'],
-        $client['auth_source'],
         $client['redirect_uri']
     );
 
-    HTTP::redirectTrustedURL('registry.php');
+    HTTP::redirectTrustedURL( 'registry.php' );
 }
 
-$template = new \SimpleSAML_XHTML_Template($config, 'oauth2:registry_new');
+$template = new SimpleSAML_XHTML_Template( $config, 'oauth2:registry_new' );
 $template->data['form'] = $form;
 $template->show();

@@ -10,13 +10,14 @@
 
 namespace SimpleSAML\Modules\OAuth2\Form;
 
+
 use Nette\Forms\Form;
 use SimpleSAML\Module;
 
 class ClientForm extends Form
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function __construct($name)
     {
@@ -35,15 +36,10 @@ class ClientForm extends Form
         $this->addTextArea('redirect_uri', 'Static/enforcing callback-url (one per line)', null, 5)
             ->setRequired('Write one redirect URI at least')
         ;
-        $this->addSelect('auth_source', 'Authorization source:')
-            ->setItems(\SimpleSAML_Auth_Source::getSources(), false)
-            ->setPrompt('Pick an AuthSource or blank for default')
-            ->setRequired(false)
-        ;
 
         $this->addSubmit('submit', 'Submit');
         $this->addButton('return', 'Return')
-            ->setAttribute('onClick', 'parent.location = \''.Module::getModuleURL('oauth2/registry.php').'\'')
+            ->setAttribute('onClick', 'parent.location = \''. Module::getModuleURL('oauth2/registry.php') .'\'')
         ;
     }
 
@@ -52,14 +48,14 @@ class ClientForm extends Form
         $values = $this->getValues();
         $redirect_uris = $values['redirect_uri'];
         foreach ($redirect_uris as $redirect_uri) {
-            if (false === filter_var($redirect_uri, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED)) {
+            if (false === filter_var($redirect_uri, FILTER_VALIDATE_URL)) {
                 $this->addError('Invalid URI: '.$redirect_uri);
             }
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getValues($asArray = false)
     {
@@ -67,7 +63,7 @@ class ClientForm extends Form
 
         // Sanitize Redirect URIs
         $redirect_uris = preg_split("/[\t\r\n]+/", $values['redirect_uri']);
-        $redirect_uris = array_filter($redirect_uris, function ($redirect_uri) {
+        $redirect_uris = array_filter($redirect_uris, function($redirect_uri) {
             return !empty(trim($redirect_uri));
         });
         $values['redirect_uri'] = $redirect_uris;
@@ -76,7 +72,7 @@ class ClientForm extends Form
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function setDefaults($values, $erase = false)
     {

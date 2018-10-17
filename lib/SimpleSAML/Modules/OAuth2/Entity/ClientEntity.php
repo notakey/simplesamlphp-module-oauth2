@@ -10,6 +10,7 @@
 
 namespace SimpleSAML\Modules\OAuth2\Entity;
 
+
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
 
@@ -17,28 +18,14 @@ class ClientEntity implements ClientEntityInterface
 {
     use EntityTrait;
 
-    /**
-     * @var string
-     */
     private $name;
 
-    /**
-     * @var string
-     */
     private $secret;
 
-    /**
-     * @var string
-     */
     private $redirectUri;
 
     /**
-     * @var string
-     */
-    private $authSource;
-
-    /**
-     * @return string
+     * @return mixed
      */
     public function getName()
     {
@@ -46,7 +33,7 @@ class ClientEntity implements ClientEntityInterface
     }
 
     /**
-     * @param string $name
+     * @param mixed $name
      */
     public function setName($name)
     {
@@ -54,7 +41,7 @@ class ClientEntity implements ClientEntityInterface
     }
 
     /**
-     * @return string
+     * @return mixed
      */
     public function getSecret()
     {
@@ -62,7 +49,7 @@ class ClientEntity implements ClientEntityInterface
     }
 
     /**
-     * @param string $secret
+     * @param mixed $secret
      */
     public function setSecret($secret)
     {
@@ -70,7 +57,7 @@ class ClientEntity implements ClientEntityInterface
     }
 
     /**
-     * @return string
+     * @return mixed
      */
     public function getRedirectUri()
     {
@@ -78,26 +65,10 @@ class ClientEntity implements ClientEntityInterface
     }
 
     /**
-     * @param string $redirectUri
+     * @param mixed $redirectUri
      */
     public function setRedirectUri($redirectUri)
     {
         $this->redirectUri = $redirectUri;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAuthSource()
-    {
-        return $this->authSource;
-    }
-
-    /**
-     * @param string $authSource
-     */
-    public function setAuthSource($authSource)
-    {
-        $this->authSource = $authSource;
     }
 }

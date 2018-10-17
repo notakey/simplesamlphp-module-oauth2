@@ -10,14 +10,15 @@
 
 namespace SimpleSAML\Modules\OAuth2\Repositories;
 
+
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use SimpleSAML\Modules\OAuth2\Entity\AuthCodeEntity;
 
-class AuthCodeRepository extends AbstractDBALRepository implements AuthCodeRepositoryInterface
+class AuthCodeRepository extends AbstractRepository implements AuthCodeRepositoryInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getNewAuthCode()
     {
@@ -25,7 +26,7 @@ class AuthCodeRepository extends AbstractDBALRepository implements AuthCodeRepos
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
@@ -34,56 +35,55 @@ class AuthCodeRepository extends AbstractDBALRepository implements AuthCodeRepos
             $scopes[] = $scope->getIdentifier();
         }
 
-        $this->conn->insert($this->getTableName(), [
-            'id' => $authCodeEntity->getIdentifier(),
+        $id = $authCodeEntity->getIdentifier();
+
+        $this->store->set($this->getTableName(), $id, [
+            'id' => $id,
             'scopes' => $scopes,
             'expires_at' => $authCodeEntity->getExpiryDateTime(),
             'user_id' => $authCodeEntity->getUserIdentifier(),
             'client_id' => $authCodeEntity->getClient()->getIdentifier(),
             'redirect_uri' => $authCodeEntity->getRedirectUri(),
-        ], [
-            'string',
-            'json_array',
-            'datetime',
-            'string',
-            'string',
-            'string',
-        ]);
+            'is_revoked' => false
+        ], $authCodeEntity->getExpiryDateTime()->getTimestamp());
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function revokeAuthCode($codeId)
     {
-        $this->conn->update($this->getTableName(), ['is_revoked' => true], ['id' => $codeId]);
+        $c = $this->getValue($this->getTableName(), $codeId);
+
+        if(is_null($c)){
+            throw new SimpleSAML_Error_Exception("Access code not found", 8767);
+        }
+
+        $c['is_revoked'] = true;
+        $this->store->set($this->getTableName(), $codeId, $c);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function isAuthCodeRevoked($codeId)
     {
-        return $this->conn->fetchColumn('SELECT is_revoked FROM '.$this->getTableName().' WHERE id = ?', [$codeId]);
+        $c = $this->getValue($this->getTableName(), $codeId);
+
+        if(is_null($c)){
+            throw new SimpleSAML_Error_Exception("Access code not found", 8767);
+        }
+
+        return $c['is_revoked'];
     }
 
     public function removeExpiredAuthCodes()
     {
-        $this->conn->executeUpdate('
-                DELETE FROM '.$this->getTableName().'
-                WHERE expires_at < ?
-            ',
-            [
-                new \DateTime(),
-            ],
-            [
-                'datetime',
-            ]
-        );
+        $this->removeExpired($this->getTableName());
     }
 
     public function getTableName()
     {
-        return $this->store->getPrefix().'_oauth2_authcode';
+        return 'oauth2_authcode';
     }
 }

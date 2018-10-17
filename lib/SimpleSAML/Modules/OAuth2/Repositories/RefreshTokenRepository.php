@@ -10,14 +10,15 @@
 
 namespace SimpleSAML\Modules\OAuth2\Repositories;
 
+
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use SimpleSAML\Modules\OAuth2\Entity\RefreshTokenEntity;
 
-class RefreshTokenRepository extends AbstractDBALRepository implements RefreshTokenRepositoryInterface
+class RefreshTokenRepository extends AbstractRepository implements RefreshTokenRepositoryInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function getNewRefreshToken()
     {
@@ -25,54 +26,55 @@ class RefreshTokenRepository extends AbstractDBALRepository implements RefreshTo
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
     {
-        $this->conn->insert($this->getTableName(), [
-            'id' => $refreshTokenEntity->getIdentifier(),
+        $id = $refreshTokenEntity->getIdentifier();
+
+        $this->store->set($this->getTableName(), $id, [
+            'id' => $id,
             'expires_at' => $refreshTokenEntity->getExpiryDateTime(),
             'accesstoken_id' => $refreshTokenEntity->getAccessToken()->getIdentifier(),
-        ], [
-            'string',
-            'datetime',
-            'string',
-        ]);
+        ], $refreshTokenEntity->getExpiryDateTime()->getTimestamp());
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function revokeRefreshToken($tokenId)
     {
-        $this->conn->update($this->getTableName(), ['is_revoked' => true], ['id' => $tokenId]);
+        $c = $this->getValue($this->getTableName(), $tokenId);
+
+        if(is_null($c)){
+            throw new SimpleSAML_Error_Exception("Refresh token not found", 8767);
+        }
+
+        $c['is_revoked'] = true;
+        $this->store->set($this->getTableName(), $tokenId, $c);
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function isRefreshTokenRevoked($tokenId)
     {
-        return $this->conn->fetchColumn('SELECT is_revoked FROM '.$this->getTableName().' WHERE id = ?', [$tokenId]);
+        $t = $this->getValue($this->getTableName(), $tokenId);
+
+        if(is_null($t)){
+            throw new SimpleSAML_Error_Exception("Token not found", 8767);
+        }
+
+        return $t['is_revoked'];
     }
 
     public function removeExpiredRefreshTokens()
     {
-        $this->conn->executeUpdate('
-                DELETE FROM '.$this->getTableName().'
-                WHERE expires_at < ?
-            ',
-            [
-                new \DateTime(),
-            ],
-            [
-                'datetime',
-            ]
-        );
+        $this->removeExpired($this->getTableName());
     }
 
     public function getTableName()
     {
-        return $this->store->getPrefix().'_oauth2_refreshtoken';
+        return 'oauth2_refreshtoken';
     }
 }

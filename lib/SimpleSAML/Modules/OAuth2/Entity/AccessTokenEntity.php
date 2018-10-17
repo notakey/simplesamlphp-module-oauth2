@@ -10,6 +10,7 @@
 
 namespace SimpleSAML\Modules\OAuth2\Entity;
 
+
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\Traits\AccessTokenTrait;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
