@@ -1,2 +1,5 @@
 vendor/
 composer.lock
+enable
+disable
+.DS_store
