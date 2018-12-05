@@ -16,6 +16,13 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 try {
+    $oauth2config = \SimpleSAML_Configuration::getOptionalConfig( 'module_oauth2.php' );
+    $showerrors = $oauth2config->getBoolean('showerrors', false);
+} catch (Exception $e) {
+    $showerrors = false;
+}
+
+try {
     $server = OAuth2ResourceServer::getInstance();
     $request = ServerRequestFactory::fromGlobals();
 
@@ -39,5 +46,7 @@ try {
     header('Content-type: text/plain; utf-8', TRUE, 500);
     header('OAuth-Error: ' . $e->getMessage());
 
-    print_r($e);
+    if($showerrors){
+        print_r($e);
+    }
 }
