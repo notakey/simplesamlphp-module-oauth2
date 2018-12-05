@@ -36,4 +36,5 @@ $clients = $clientRepository->findAll();
 
 $template = new SimpleSAML_XHTML_Template( $config, 'oauth2:registry_list' );
 $template->data['clients'] = $clients;
+$template->data['backlink'] = SimpleSAML\Module::getModuleURL('core/frontpage_federation.php');
 $template->show();

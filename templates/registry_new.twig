@@ -1,8 +1,6 @@
 {% extends "base.twig" %}
 
-{% block preload %}
-    <link rel="stylesheet" type="text/css" href="/{{ baseurlpath }}module.php/oauth2/resources/style.css">
-{% endblock %}
+{% set moduleurlpath = '/' ~  baseurlpath ~ 'module.php/oauth2/' %}
 
 {% block content %}
     <h1>Oauth2 Client Registry</h1>
