@@ -12,9 +12,9 @@ use SimpleSAML\Modules\OAuth2\Repositories\ClientRepository;
 use SimpleSAML\Utils\Auth;
 use SimpleSAML\Utils\HTTP;
 
-$config = SimpleSAML_Configuration::getInstance();
-$session = SimpleSAML_Session::getSessionFromRequest();
-$oauthconfig = SimpleSAML_Configuration::getOptionalConfig('module_oauth2.php');
+$config = \SimpleSAML\Configuration::getInstance();
+$session = \SimpleSAML\Session::getSessionFromRequest();
+$oauthconfig = \SimpleSAML\Configuration::getOptionalConfig('module_oauth2.php');
 
 Auth::requireAdmin();
 

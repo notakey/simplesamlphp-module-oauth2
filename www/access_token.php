@@ -13,7 +13,7 @@ use SimpleSAML\Modules\OAuth2\OAuth2AuthorizationServer;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
-$oauth2config = \SimpleSAML_Configuration::getOptionalConfig( 'module_oauth2.php' );
+$oauth2config = \SimpleSAML\Configuration::getOptionalConfig('module_oauth2.php');
 $showerrors = $oauth2config->getBoolean('showerrors', false);
 
 try {
@@ -28,7 +28,7 @@ try {
     header('Content-type: text/plain; utf-8', TRUE, 500);
     header('OAuth-Error: ' . $e->getMessage());
 
-    if($showerrors){
+    if ($showerrors) {
         print_r($e);
     }
 }
