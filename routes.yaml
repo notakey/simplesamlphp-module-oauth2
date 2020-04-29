@@ -1,0 +1,9 @@
+oauth2-authorize:
+    path:       /authorize
+    defaults:   { _controller: 'SimpleSAML\Module\oauth2\Controller::authorize' }
+oauth2-token:
+    path:       /token
+    defaults:   { _controller: 'SimpleSAML\Module\oauth2\Controller::token' }
+oauth2-userinfo:
+    path:       /userinfo
+    defaults:   { _controller: 'SimpleSAML\Module\oauth2\Controller::userinfo' }
