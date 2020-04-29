@@ -19,7 +19,7 @@ abstract class AbstractRepository
     protected $store;
 
     /**
-     * @var \\SimpleSAML\Configuration
+     * @var \SimpleSAML\Configuration
      */
     protected $config;
 
@@ -28,11 +28,12 @@ abstract class AbstractRepository
      */
     public function __construct()
     {
-        $this->config = \\SimpleSAML\Configuration::getOptionalConfig( 'module_oauth2.php' );
+        $this->config = \SimpleSAML\Configuration::getOptionalConfig('module_oauth2.php');
         $this->store = \SimpleSAML\Store::getInstance();
     }
 
-    public function getValue($table_name, $id){
+    public function getValue($table_name, $id)
+    {
         return $this->store->get($table_name, $id);
     }
 
@@ -40,8 +41,8 @@ abstract class AbstractRepository
     {
         $tarr = $this->store->get($table_name, null);
 
-        foreach($tarr as $t){
-            if($t['expires_at']->getTimestamp() < time()){
+        foreach ($tarr as $t) {
+            if ($t['expires_at']->getTimestamp() < time()) {
                 $this->store->delete($table_name, $t['id']);
             }
         }
