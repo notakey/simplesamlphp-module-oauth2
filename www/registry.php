@@ -34,7 +34,7 @@ if (isset($_REQUEST['restore'])) {
 
 $clients = $clientRepository->findAll();
 
-$template = new \SimpleSAML\XHTML\Template($config, 'oauth2:registry_list');
+$template = new \SimpleSAML\XHTML\Template($config, 'oauth2:registry_list.twig');
 $template->data['clients'] = $clients;
 $template->data['backlink'] = SimpleSAML\Module::getModuleURL('core/frontpage_federation.php');
 $template->show();
