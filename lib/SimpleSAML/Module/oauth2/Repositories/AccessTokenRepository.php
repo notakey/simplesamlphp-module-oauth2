@@ -8,13 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace SimpleSAML\Modules\OAuth2\Repositories;
+namespace SimpleSAML\Module\oauth2\Repositories;
 
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use SimpleSAML\Modules\OAuth2\Entity\AccessTokenEntity;
+use SimpleSAML\Module\oauth2\Entity\AccessTokenEntity;
 
 class AccessTokenRepository extends AbstractRepository implements AccessTokenRepositoryInterface
 {
@@ -45,7 +45,8 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
         $id = $accessTokenEntity->getIdentifier();
 
         $this->store->set(
-            $this->getTableName(), $id,
+            $this->getTableName(),
+            $id,
             [
                 'id' => $id,
                 'scopes' => $scopes,
@@ -53,7 +54,8 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
                 'user_id' => $accessTokenEntity->getUserIdentifier(),
                 'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
                 'is_revoked' => false
-            ], $accessTokenEntity->getExpiryDateTime()->getTimestamp()
+            ],
+            $accessTokenEntity->getExpiryDateTime()->getTimestamp()
         );
     }
 
@@ -61,7 +63,7 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
     {
         $t = $this->getValue($this->getTableName(), $tokenId);
 
-        if(is_null($t)){
+        if (is_null($t)) {
             throw new SimpleSAML_Error_Exception("Token not found", 8767);
         }
 
@@ -75,7 +77,7 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
     {
         $t = $this->getValue($this->getTableName(), $tokenId);
 
-        if(is_null($t)){
+        if (is_null($t)) {
             throw new SimpleSAML_Error_Exception("Token not found", 8767);
         }
 
@@ -91,7 +93,7 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
     {
         $t = $this->getValue($this->getTableName(), $tokenId);
 
-        if(is_null($t)){
+        if (is_null($t)) {
             throw new SimpleSAML_Error_Exception("Token not found", 8767);
         }
 

@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace SimpleSAML\Modules\OAuth2\Repositories;
+namespace SimpleSAML\Module\oauth2\Repositories;
 
 
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
-use SimpleSAML\Modules\OAuth2\Entity\AuthCodeEntity;
+use SimpleSAML\Module\oauth2\Entity\AuthCodeEntity;
 
 class AuthCodeRepository extends AbstractRepository implements AuthCodeRepositoryInterface
 {
@@ -55,7 +55,7 @@ class AuthCodeRepository extends AbstractRepository implements AuthCodeRepositor
     {
         $c = $this->getValue($this->getTableName(), $codeId);
 
-        if(is_null($c)){
+        if (is_null($c)) {
             throw new SimpleSAML_Error_Exception("Access code not found", 8767);
         }
 
@@ -70,7 +70,7 @@ class AuthCodeRepository extends AbstractRepository implements AuthCodeRepositor
     {
         $c = $this->getValue($this->getTableName(), $codeId);
 
-        if(is_null($c)){
+        if (is_null($c)) {
             throw new SimpleSAML_Error_Exception("Access code not found", 8767);
         }
 

@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace SimpleSAML\Modules\OAuth2\Repositories;
+namespace SimpleSAML\Module\oauth2\Repositories;
 
 
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use SimpleSAML\Modules\OAuth2\Entity\RefreshTokenEntity;
+use SimpleSAML\Module\oauth2\Entity\RefreshTokenEntity;
 
 class RefreshTokenRepository extends AbstractRepository implements RefreshTokenRepositoryInterface
 {
@@ -46,7 +46,7 @@ class RefreshTokenRepository extends AbstractRepository implements RefreshTokenR
     {
         $c = $this->getValue($this->getTableName(), $tokenId);
 
-        if(is_null($c)){
+        if (is_null($c)) {
             throw new SimpleSAML_Error_Exception("Refresh token not found", 8767);
         }
 
@@ -61,7 +61,7 @@ class RefreshTokenRepository extends AbstractRepository implements RefreshTokenR
     {
         $t = $this->getValue($this->getTableName(), $tokenId);
 
-        if(is_null($t)){
+        if (is_null($t)) {
             throw new SimpleSAML_Error_Exception("Token not found", 8767);
         }
 

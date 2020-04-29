@@ -9,7 +9,7 @@
  */
 
 
-namespace SimpleSAML\Modules\OAuth2\Repositories;
+namespace SimpleSAML\Module\oauth2\Repositories;
 
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
@@ -22,8 +22,7 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
         $password,
         $grantType,
         ClientEntityInterface $clientEntity
-    )
-    {
+    ) {
         throw new \Exception('Not supported');
     }
 
@@ -31,7 +30,9 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
     {
         $now = new \DateTime();
 
-        $this->store->set($this->getTableName(), $id,
+        $this->store->set(
+            $this->getTableName(),
+            $id,
             [
                 'id' => $id,
                 'attributes' => $attributes,
@@ -61,7 +62,7 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
         $user = $this->getValue($this->getTableName(), $userId);
         if (is_null($user)) {
             $this->persistNewUser($userId, $attributes);
-        }else{
+        } else {
             $this->updateUser($userId, $attributes);
         }
     }

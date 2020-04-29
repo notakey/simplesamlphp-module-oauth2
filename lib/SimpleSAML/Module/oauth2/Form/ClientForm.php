@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace SimpleSAML\Modules\OAuth2\Form;
+namespace SimpleSAML\Module\oauth2\Form;
 
 
 use Nette\Forms\Form;
@@ -30,17 +30,14 @@ class ClientForm extends Form
 
         $this->addText('name', 'Name of client:')
             ->setMaxLength(255)
-            ->setRequired('Set a name')
-        ;
+            ->setRequired('Set a name');
         $this->addTextArea('description', 'Description of client:', null, 5);
         $this->addTextArea('redirect_uri', 'Static/enforcing callback-url (one per line)', null, 5)
-            ->setRequired('Write one redirect URI at least')
-        ;
+            ->setRequired('Write one redirect URI at least');
 
         $this->addSubmit('submit', 'Submit');
         $this->addButton('return', 'Return')
-            ->setAttribute('onClick', 'parent.location = \''. Module::getModuleURL('oauth2/registry.php') .'\'')
-        ;
+            ->setAttribute('onClick', 'parent.location = \'' . Module::getModuleURL('oauth2/registry.php') . '\'');
     }
 
     public function validateRedirectUri($form)
@@ -49,7 +46,7 @@ class ClientForm extends Form
         $redirect_uris = $values['redirect_uri'];
         foreach ($redirect_uris as $redirect_uri) {
             if (false === filter_var($redirect_uri, FILTER_VALIDATE_URL)) {
-                $this->addError('Invalid URI: '.$redirect_uri);
+                $this->addError('Invalid URI: ' . $redirect_uri);
             }
         }
     }
@@ -63,7 +60,7 @@ class ClientForm extends Form
 
         // Sanitize Redirect URIs
         $redirect_uris = preg_split("/[\t\r\n]+/", $values['redirect_uri']);
-        $redirect_uris = array_filter($redirect_uris, function($redirect_uri) {
+        $redirect_uris = array_filter($redirect_uris, function ($redirect_uri) {
             return !empty(trim($redirect_uri));
         });
         $values['redirect_uri'] = $redirect_uris;
