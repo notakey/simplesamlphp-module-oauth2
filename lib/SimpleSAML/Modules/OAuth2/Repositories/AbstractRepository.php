@@ -19,7 +19,7 @@ abstract class AbstractRepository
     protected $store;
 
     /**
-     * @var \SimpleSAML_Configuration
+     * @var \\SimpleSAML\Configuration
      */
     protected $config;
 
@@ -28,7 +28,7 @@ abstract class AbstractRepository
      */
     public function __construct()
     {
-        $this->config = \SimpleSAML_Configuration::getOptionalConfig( 'module_oauth2.php' );
+        $this->config = \\SimpleSAML\Configuration::getOptionalConfig( 'module_oauth2.php' );
         $this->store = \SimpleSAML\Store::getInstance();
     }
 

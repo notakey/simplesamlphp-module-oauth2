@@ -66,8 +66,8 @@ class ClientRepository extends AbstractRepository implements ClientRepositoryInt
     {
         $v = $this->find($id);
 
-        if(!$v){
-            throw new SimpleSAML_Error_Exception("OAuth client not found", 8769);
+        if (!$v) {
+            throw new  \SimpleSAML\Error\Exception("OAuth client not found", 8769);
         }
 
         $this->store->set($this->getTableName(), $id, [
@@ -87,8 +87,8 @@ class ClientRepository extends AbstractRepository implements ClientRepositoryInt
 
     public function find($clientIdentifier)
     {
-        if(is_null($clientIdentifier)){
-            throw new SimpleSAML_Error_Exception("OAuth clientIdentifier cannot be empty", 8767);
+        if (is_null($clientIdentifier)) {
+            throw new  \SimpleSAML\Error\Exception("OAuth clientIdentifier cannot be empty", 8767);
         }
 
         $client = $this->store->get($this->getTableName(), $clientIdentifier);

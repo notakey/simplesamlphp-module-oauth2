@@ -18,7 +18,7 @@ Auth::requireAdmin();
 /* Load simpleSAMLphp, configuration and metadata */
 $client_id = $_REQUEST['id'];
 $action = \SimpleSAML\Module::getModuleURL('oauth2/registry.edit.php', ['id' => $client_id]);
-$config = SimpleSAML_Configuration::getInstance();
+$config = \SimpleSAML\Configuration::getInstance();
 
 $clientRepository = new ClientRepository();
 $client = $clientRepository->find($client_id);
@@ -43,9 +43,9 @@ if ($form->isSubmitted() && $form->isSuccess()) {
         $client['redirect_uri']
     );
 
-    HTTP::redirectTrustedURL( 'registry.php' );
+    HTTP::redirectTrustedURL('registry.php');
 }
 
-$template = new SimpleSAML_XHTML_Template( $config, 'oauth2:registry_edit' );
+$template = new \SimpleSAML\XHTML\Template($config, 'oauth2:registry_edit');
 $template->data['form'] = $form;
 $template->show();

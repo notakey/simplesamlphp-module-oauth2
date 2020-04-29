@@ -46,8 +46,8 @@ class RefreshTokenRepository extends AbstractRepository implements RefreshTokenR
     {
         $c = $this->getValue($this->getTableName(), $tokenId);
 
-        if(is_null($c)){
-            throw new SimpleSAML_Error_Exception("Refresh token not found", 8767);
+        if (is_null($c)) {
+            throw new  \SimpleSAML\Error\Exception("Refresh token not found", 8767);
         }
 
         $c['is_revoked'] = true;
@@ -61,8 +61,8 @@ class RefreshTokenRepository extends AbstractRepository implements RefreshTokenR
     {
         $t = $this->getValue($this->getTableName(), $tokenId);
 
-        if(is_null($t)){
-            throw new SimpleSAML_Error_Exception("Token not found", 8767);
+        if (is_null($t)) {
+            throw new  \SimpleSAML\Error\Exception("Token not found", 8767);
         }
 
         return $t['is_revoked'];

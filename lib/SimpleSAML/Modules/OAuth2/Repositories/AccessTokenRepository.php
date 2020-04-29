@@ -45,7 +45,8 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
         $id = $accessTokenEntity->getIdentifier();
 
         $this->store->set(
-            $this->getTableName(), $id,
+            $this->getTableName(),
+            $id,
             [
                 'id' => $id,
                 'scopes' => $scopes,
@@ -53,7 +54,8 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
                 'user_id' => $accessTokenEntity->getUserIdentifier(),
                 'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
                 'is_revoked' => false
-            ], $accessTokenEntity->getExpiryDateTime()->getTimestamp()
+            ],
+            $accessTokenEntity->getExpiryDateTime()->getTimestamp()
         );
     }
 
@@ -61,8 +63,8 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
     {
         $t = $this->getValue($this->getTableName(), $tokenId);
 
-        if(is_null($t)){
-            throw new SimpleSAML_Error_Exception("Token not found", 8767);
+        if (is_null($t)) {
+            throw new  \SimpleSAML\Error\Exception("Token not found", 8767);
         }
 
         return $t['user_id'];
@@ -75,8 +77,8 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
     {
         $t = $this->getValue($this->getTableName(), $tokenId);
 
-        if(is_null($t)){
-            throw new SimpleSAML_Error_Exception("Token not found", 8767);
+        if (is_null($t)) {
+            throw new  \SimpleSAML\Error\Exception("Token not found", 8767);
         }
 
         $t['is_revoked'] = true;
@@ -91,8 +93,8 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
     {
         $t = $this->getValue($this->getTableName(), $tokenId);
 
-        if(is_null($t)){
-            throw new SimpleSAML_Error_Exception("Token not found", 8767);
+        if (is_null($t)) {
+            throw new  \SimpleSAML\Error\Exception("Token not found", 8767);
         }
 
         return $t['is_revoked'];

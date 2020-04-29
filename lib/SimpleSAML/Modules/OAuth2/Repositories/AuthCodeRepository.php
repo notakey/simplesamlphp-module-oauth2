@@ -55,8 +55,8 @@ class AuthCodeRepository extends AbstractRepository implements AuthCodeRepositor
     {
         $c = $this->getValue($this->getTableName(), $codeId);
 
-        if(is_null($c)){
-            throw new SimpleSAML_Error_Exception("Access code not found", 8767);
+        if (is_null($c)) {
+            throw new  \SimpleSAML\Error\Exception("Access code not found", 8767);
         }
 
         $c['is_revoked'] = true;
@@ -70,8 +70,8 @@ class AuthCodeRepository extends AbstractRepository implements AuthCodeRepositor
     {
         $c = $this->getValue($this->getTableName(), $codeId);
 
-        if(is_null($c)){
-            throw new SimpleSAML_Error_Exception("Access code not found", 8767);
+        if (is_null($c)) {
+            throw new  \SimpleSAML\Error\Exception("Access code not found", 8767);
         }
 
         return $c['is_revoked'];
