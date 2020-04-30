@@ -1,0 +1,8 @@
+.container table tr td {
+    padding: 0.30rem;
+    width: 50%;
+}
+
+.metalist th {
+    width: 20%;
+}
