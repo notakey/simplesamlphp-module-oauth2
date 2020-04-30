@@ -10,7 +10,7 @@
     }],
     "autoload": {
         "psr-0": {
-            "SimpleSAML\\Modules\\OAuth2\\": "lib"
+            "SimpleSAML\\Module\\oauth2\\": "lib"
         }
     },
     "require": {
