@@ -8,8 +8,8 @@
  * file that was distributed with this source code.
  */
 
-use SimpleSAML\Modules\OAuth2\Form\ClientForm;
-use SimpleSAML\Modules\OAuth2\Repositories\ClientRepository;
+use SimpleSAML\Module\oauth2\Form\ClientForm;
+use SimpleSAML\Module\oauth2\Repositories\ClientRepository;
 use SimpleSAML\Utils\Auth;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\Utils\Random;
@@ -41,6 +41,6 @@ if ($form->isSubmitted() && $form->isSuccess()) {
     HTTP::redirectTrustedURL('registry.php');
 }
 
-$template = new \SimpleSAML\XHTML\Template($config, 'oauth2:registry_new.twig');
+$template = new \SimpleSAML\XHTML\Template($config, 'oauth2:registry_new');
 $template->data['form'] = $form;
 $template->show();

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-use SimpleSAML\Modules\OAuth2\Repositories\ClientRepository;
+use SimpleSAML\Module\oauth2\Repositories\ClientRepository;
 use SimpleSAML\Utils\Auth;
 use SimpleSAML\Utils\HTTP;
 
@@ -34,7 +34,7 @@ if (isset($_REQUEST['restore'])) {
 
 $clients = $clientRepository->findAll();
 
-$template = new \SimpleSAML\XHTML\Template($config, 'oauth2:registry_list.twig');
+$template = new \SimpleSAML\XHTML\Template($config, 'oauth2:registry_list');
 $template->data['clients'] = $clients;
-$template->data['backlink'] = SimpleSAML\Module::getModuleURL('core/frontpage_federation.php');
+$template->data['backlink'] = \SimpleSAML\Module::getModuleURL('core/frontpage_federation.php');
 $template->show();

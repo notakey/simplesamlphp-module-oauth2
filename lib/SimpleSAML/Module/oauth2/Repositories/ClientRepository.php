@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace SimpleSAML\Modules\OAuth2\Repositories;
+namespace SimpleSAML\Module\oauth2\Repositories;
 
 
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
-use SimpleSAML\Modules\OAuth2\Entity\ClientEntity;
+use SimpleSAML\Module\oauth2\Entity\ClientEntity;
 use SimpleSAML\Utils\Random;
 
 class ClientRepository extends AbstractRepository implements ClientRepositoryInterface
@@ -22,7 +22,7 @@ class ClientRepository extends AbstractRepository implements ClientRepositoryInt
      */
     public function getClientEntity($clientIdentifier, $grantType, $clientSecret = null, $mustValidateSecret = true)
     {
-        /** @var \SimpleSAML\Modules\OAuth2\Entity\ClientEntity $entity */
+        /** @var \SimpleSAML\Module\oauth2\Entity\ClientEntity $entity */
         $entity = $this->find($clientIdentifier);
 
         if (!$entity) {

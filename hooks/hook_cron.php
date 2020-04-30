@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-use SimpleSAML\Modules\OAuth2\Repositories\AccessTokenRepository;
-use SimpleSAML\Modules\OAuth2\Repositories\AuthCodeRepository;
-use SimpleSAML\Modules\OAuth2\Repositories\RefreshTokenRepository;
+use SimpleSAML\Module\oauth2\Repositories\AccessTokenRepository;
+use SimpleSAML\Module\oauth2\Repositories\AuthCodeRepository;
+use SimpleSAML\Module\oauth2\Repositories\RefreshTokenRepository;
 
 function oauth2_hook_cron(&$croninfo)
 {

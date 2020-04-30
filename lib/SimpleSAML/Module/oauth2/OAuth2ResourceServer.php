@@ -13,7 +13,7 @@ namespace SimpleSAML\Modules\OAuth2;
 
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\ResourceServer;
-use SimpleSAML\Modules\OAuth2\Repositories\AccessTokenRepository;
+use SimpleSAML\Module\oauth2\Repositories\AccessTokenRepository;
 use SimpleSAML\Utils\Config;
 
 class OAuth2ResourceServer
