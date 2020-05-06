@@ -10,8 +10,9 @@
 
 
 use SimpleSAML\Module\oauth2\OAuth2AuthorizationServer;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 $oauth2config = \SimpleSAML\Configuration::getOptionalConfig('module_oauth2.php');
 $showerrors = $oauth2config->getBoolean('showerrors', false);
@@ -22,7 +23,7 @@ try {
 
     $response = $server->respondToAccessTokenRequest($request, new Response());
 
-    $emiter = new Response\SapiEmitter();
+    $emiter = new SapiEmitter();
     $emiter->emit($response);
 } catch (Exception $e) {
     header('Content-type: text/plain; utf-8', TRUE, 500);

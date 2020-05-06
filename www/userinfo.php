@@ -12,8 +12,9 @@
 use SimpleSAML\Module\oauth2\OAuth2ResourceServer;
 use SimpleSAML\Module\oauth2\Repositories\AccessTokenRepository;
 use SimpleSAML\Module\oauth2\Repositories\UserRepository;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 try {
     $oauth2config = \SimpleSAML\Configuration::getOptionalConfig('module_oauth2.php');
@@ -34,13 +35,17 @@ try {
     $accessTokenRepository = new AccessTokenRepository();
     $userId = $accessTokenRepository->getUserId($tokenId);
 
+    if (!$userId) {
+        throw new Exception("OAuth2 user not found.");
+    }
+
     $userRepository = new UserRepository();
     $attributes['attributes'] = $userRepository->getAttributes($userId);
     $attributes['username'] = $userId;
 
     $response = new Response\JsonResponse($attributes);
 
-    $emiter = new Response\SapiEmitter();
+    $emiter = new SapiEmitter();
     $emiter->emit($response);
 } catch (Exception $e) {
     header('Content-type: text/plain; utf-8', TRUE, 500);

@@ -12,8 +12,9 @@
 use SimpleSAML\Module\oauth2\Entity\UserEntity;
 use SimpleSAML\Module\oauth2\OAuth2AuthorizationServer;
 use SimpleSAML\Module\oauth2\Repositories\UserRepository;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 
 $oauth2config = \SimpleSAML\Configuration::getOptionalConfig('module_oauth2.php');
@@ -29,8 +30,9 @@ try {
 
     $attributes = $auth->getAttributes();
     if (!isset($attributes[$useridattr])) {
-        throw new \Exception('Oauth2 useridattr doesn\'t exists. Available attributes are: ' . implode(", ", $attributes));
+        throw new \Exception('OAuth2 useridattr ' . $useridattr . ' doesn\'t exist. Available attributes are: ' . implode(", ", $attributes));
     }
+
     $userid = $attributes[$useridattr][0];
 
     // Persists the user attributes on the database
@@ -46,7 +48,7 @@ try {
 
     $response = $server->completeAuthorizationRequest($authRequest, new Response());
 
-    $emiter = new Response\SapiEmitter();
+    $emiter = new SapiEmitter();
     $emiter->emit($response);
 } catch (Exception $e) {
     header('Content-type: text/plain; utf-8', TRUE, 500);

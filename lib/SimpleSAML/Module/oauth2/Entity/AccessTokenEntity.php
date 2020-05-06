@@ -18,5 +18,16 @@ use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
 
 class AccessTokenEntity implements AccessTokenEntityInterface
 {
+    private $user_identifier;
     use AccessTokenTrait, TokenEntityTrait, EntityTrait;
+
+    public function setUserIdentifier($identifier)
+    {
+        $this->user_identifier = $identifier;
+    }
+
+    public function getUserIdentifier()
+    {
+        return $this->user_identifier;
+    }
 }

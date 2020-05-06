@@ -25,6 +25,7 @@ class AccessTokenRepository extends AbstractRepository implements AccessTokenRep
     {
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient($clientEntity);
+        $accessToken->setUserIdentifier($userIdentifier);
         foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
         }

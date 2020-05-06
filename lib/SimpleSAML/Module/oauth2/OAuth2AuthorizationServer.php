@@ -48,10 +48,8 @@ class OAuth2AuthorizationServer
             new AccessTokenRepository(),
             new ScopeRepository(),
             $privateKey,
-            $publicKey
+            $oauth2config->getString('oauthEncryptionKey', null)
         );
-
-        self::$instance->setEncryptionKey($oauth2config->getString('oauthEncryptionKey', null));
 
         $refreshTokenRepository = new RefreshTokenRepository();
 

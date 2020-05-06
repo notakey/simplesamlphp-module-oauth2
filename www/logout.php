@@ -8,9 +8,6 @@
  * file that was distributed with this source code.
  */
 
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
-
 
 $oauth2config = \SimpleSAML\Configuration::getOptionalConfig('module_oauth2.php');
 $showerrors = $oauth2config->getBoolean('showerrors', false);

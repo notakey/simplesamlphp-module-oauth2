@@ -20,17 +20,13 @@ class ClientRepository extends AbstractRepository implements ClientRepositoryInt
     /**
      * @inheritDoc
      */
-    public function getClientEntity($clientIdentifier, $grantType, $clientSecret = null, $mustValidateSecret = true)
+    public function getClientEntity($clientIdentifier)
     {
         /** @var \SimpleSAML\Module\oauth2\Entity\ClientEntity $entity */
         $entity = $this->find($clientIdentifier);
 
         if (!$entity) {
-            return;
-        }
-
-        if ($clientSecret && $clientSecret !== $entity['secret']) {
-            return;
+            throw new \Exception("OAuth client entity not found");
         }
 
         $client = new ClientEntity();
@@ -124,5 +120,20 @@ class ClientRepository extends AbstractRepository implements ClientRepositoryInt
         $v = $this->find($clientIdentifier);
         $v['secret'] = $secret;
         $this->store->set($this->getTableName(), $clientIdentifier, $v);
+    }
+
+    public function validateClient($clientIdentifier, $clientSecret, $grantType)
+    {
+        $entity = $this->find($clientIdentifier);
+
+        if (!$entity) {
+            return false;
+        }
+
+        if ($clientSecret && $clientSecret !== $entity['secret']) {
+            return false;
+        }
+
+        return true;
     }
 }
