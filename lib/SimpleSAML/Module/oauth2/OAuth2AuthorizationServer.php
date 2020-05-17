@@ -39,9 +39,7 @@ class OAuth2AuthorizationServer
         $refreshTokenDuration = $oauth2config->getString('refreshTokenDuration');
 
         $privateKeyPath = Config::getCertPath('oauth2_module.pem');
-        $publicKeyPath = Config::getCertPath('oauth2_module.crt');
         $privateKey = new CryptKey($privateKeyPath, $passPhrase);
-        $publicKey = new CryptKey($publicKeyPath);
 
         self::$instance = new AuthorizationServer(
             new ClientRepository(),
