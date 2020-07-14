@@ -33,7 +33,15 @@ try {
         throw new \Exception('OAuth2 useridattr ' . $useridattr . ' doesn\'t exist. Available attributes are: ' . implode(", ", $attributes));
     }
 
-    $userid = $attributes[$useridattr][0];
+    if (empty(@$attributes[$useridattr][0])) {
+        throw new \Exception('OAuth2 required useridattr ' . $useridattr . ' not present.');
+    }
+
+    if (count($attributes[$useridattr]) != 1) {
+        $userid = $attributes[$useridattr][0];
+    } else {
+        $userid = join('-', $attributes[$useridattr]);
+    }
 
     // Persists the user attributes on the database
     $userRepository = new UserRepository();
