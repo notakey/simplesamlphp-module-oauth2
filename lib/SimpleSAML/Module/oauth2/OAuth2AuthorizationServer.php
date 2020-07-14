@@ -56,7 +56,7 @@ class OAuth2AuthorizationServer
             $refreshTokenRepository,
             new \DateInterval($authCodeDuration)
         );
-        $authCodeGrant->setRefreshTokenTTL(new \DateInterval($refreshTokenDuration)); // refresh tokens will expire after 1 month
+        $authCodeGrant->setRefreshTokenTTL(new \DateInterval($refreshTokenDuration));
 
         self::$instance->enableGrantType(
             $authCodeGrant,
